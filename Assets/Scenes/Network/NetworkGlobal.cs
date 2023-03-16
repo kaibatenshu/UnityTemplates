@@ -15,4 +15,18 @@ public class NetworkGlobal : MonoBehaviour
     {
         
     }
+
+
+    private static NetworkGlobal ins = null;
+    public static NetworkGlobal instance{
+        get{
+            if (ins == null){
+                GameObject go = new GameObject();
+                ins = go.AddComponent<NetworkGlobal>();
+                go.name = ins.GetType().Name;
+                DontDestroyOnLoad(ins);
+            }
+            return ins;
+        }
+    }
 }
