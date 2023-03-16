@@ -38,17 +38,19 @@ public class GoogleSignIn_UnityEditor : MonoBehaviour{
             string access_token = jsonResult["access_token"].ToString();
 
             Debug.Log("idToken : "+jsonResult["id_token"]);
+            Application.OpenURL("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token="+jsonResult["id_token"]);
         }
     }
 
     // Start is called before the first frame update
     void Start(){
-        
+
+
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
         
     }
 }
+
