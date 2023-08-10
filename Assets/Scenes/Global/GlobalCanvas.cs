@@ -2,20 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GlobalCanvas : MonoBehaviour
-{
-    [SerializeField] private Dialog_Alert alertDialog;
-    [SerializeField] private Dialog_Loading loadingDialog;
-    [SerializeField] private Dialog_YesNo_Input inputDialog;
-    [SerializeField] private Dialog_YesNo_Text textDialog;
-
-
-
+public class GlobalCanvas : MonoBehaviour{
     public void ShowLoading(bool touchClose)
     {
 
     }
-    public void ShowAlertDialog(){
+    public void ShowAlertDialog(string alert){
 
     }
 
@@ -36,8 +28,17 @@ public class GlobalCanvas : MonoBehaviour
     public void trace()
     {
         Debug.Log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        ShowAlertDialog("bbbbbbbbbbbbbbbbbbbbbb");
     }
 
     private static GlobalCanvas ins = null;
-    public static GlobalCanvas instance { get { return ins; } }
+    public static GlobalCanvas instance { get {
+            if (ins == null){
+                GameObject gameObject = new GameObject("GlobalCanvas");
+                DontDestroyOnLoad (gameObject);
+                ins = gameObject.AddComponent<GlobalCanvas>();
+            }
+            return ins; 
+        } 
+    }
 }
