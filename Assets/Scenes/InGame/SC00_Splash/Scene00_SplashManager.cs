@@ -1,6 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Scene00_SplashManager : MonoBehaviour
 {
@@ -17,7 +18,9 @@ public class Scene00_SplashManager : MonoBehaviour
     }
 
     public void onClickButtonTest() {
-        GlobalCanvas.instance.trace();
-
+        GlobalCanvas.instance.ShowAlertDialog("change to Login Scene", "Đồng ý", () => {
+            SceneManager.LoadScene("Scene01_Login");
+        });
+        //GlobalCanvas.instance.trace();
     }
 }

@@ -15,4 +15,8 @@ public class Scene01_LoginManager : MonoBehaviour
     {
         
     }
+
+    public void onClickButton() {
+        GlobalCanvas.instance.ShowAlertDialog("aaaaaaaaabbbbbbbbbbbbbbbbbbbb");
+    }
 }

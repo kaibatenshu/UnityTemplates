@@ -19,12 +19,12 @@ public class Dialog_Alert : MonoBehaviour{
     public void onPanel() {
         if (touchOutForClose && onClose != null){
             onClose();
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
     public void onButton() {
         if (onClose != null)
             onClose();
-        Destroy(this);
+        Destroy(gameObject);
     }
 }
