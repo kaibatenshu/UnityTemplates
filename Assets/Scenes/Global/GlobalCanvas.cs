@@ -1,29 +1,26 @@
+
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GlobalCanvas : MonoBehaviour{
     public void ShowLoading(bool touchClose)
     {
 
     }
-    public void ShowAlertDialog(string alert){
-
+    public void ShowAlertDialog(string alert, string textButton="Ok", UnityAction onClose = null, bool touchOutForClose=false){
+        GameObject prefab = Instantiate(PrefabUtility.LoadPrefabContents("Assets/Scenes/Global/Dialog/Alert/Dialog_Alert.prefab"), GameObject.Find("Canvas").transform);
+        prefab.GetComponent<Dialog_Alert>().onClose = onClose;
+        prefab.GetComponent<Dialog_Alert>().touchOutForClose = touchOutForClose;
+        prefab.GetComponent<Dialog_Alert>().setup(alert, textButton);
+        prefab.name = "AlertDialog";
     }
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        ins = this;
-        DontDestroyOnLoad(ins);
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
 
-    }
 
     public void trace()
     {

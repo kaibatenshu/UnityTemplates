@@ -118,7 +118,10 @@ public class OnehitCore{
         int ch3 = datatransfer[2] & 0xFF;
         int ch4 = datatransfer[3] & 0xFF;
         length = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
-        if(length<0 || length>32768){
+        if (length == 0){
+            onSuccess();
+            return;
+        }else if(length<0 || length>32768){
             onError("LengthError");
             return;
         }

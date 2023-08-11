@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SplashSceneManager : MonoBehaviour
+public class Scene02_HomeManager : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -14,10 +14,5 @@ public class SplashSceneManager : MonoBehaviour
     void Update()
     {
         
-    }
-
-    public void onClickButtonTest() {
-        GlobalCanvas.instance.trace();
-
     }
 }

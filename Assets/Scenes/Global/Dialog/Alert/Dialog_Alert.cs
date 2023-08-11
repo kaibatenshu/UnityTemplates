@@ -1,22 +1,30 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Dialog_Alert : MonoBehaviour{
-    [SerializeField] private Text text;
+    [SerializeField] private Text textInfo;
+    [SerializeField] private Button buttonOk;
 
-    public Action onClose;
+    public UnityAction onClose;
+    public bool touchOutForClose;
 
-    void Start(){
-
+    public void setup(string _textInfo,string _textButton) {
+        textInfo.text = _textInfo;
+        buttonOk.GetComponentInChildren<Text>().text = _textButton;
     }
 
-    public void onButtonClose() {
-        Debug.Log("<color=orange>Dialog_Alert</color> -> button ");
+    public void onPanel() {
+        if (touchOutForClose && onClose != null){
+            onClose();
+            Destroy(this);
+        }
+    }
+    public void onButton() {
         if (onClose != null)
             onClose();
-        gameObject.SetActive(false);
+        Destroy(this);
     }
 }
