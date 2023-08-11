@@ -92,6 +92,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputCode: {fileID: 3700388834698881644}
   buttonLogin: {fileID: 5808534505011975208}
+  webClientId: 
+  webClientSecret: 
+  redirect_uri: 
 --- !u!1 &699614036394636624
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +187,7 @@ GameObject:
   - component: {fileID: 4117124252436237729}
   - component: {fileID: 3700388834698881644}
   m_Layer: 5
-  m_Name: inputCode
+  m_Name: BG_inputCode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -488,7 +491,7 @@ GameObject:
   - component: {fileID: 1798974855509761570}
   - component: {fileID: 5808534505011975208}
   m_Layer: 5
-  m_Name: buttonLogin
+  m_Name: BG_buttonLogin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

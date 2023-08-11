@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 2966109764612304903}
   - component: {fileID: 1238446646104428492}
   m_Layer: 5
-  m_Name: TextInfo
+  m_Name: BG_TextInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 6397115394624228974}
   - component: {fileID: 2722622614896589170}
   m_Layer: 5
-  m_Name: ButtonOk
+  m_Name: BG_ButtonOk
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

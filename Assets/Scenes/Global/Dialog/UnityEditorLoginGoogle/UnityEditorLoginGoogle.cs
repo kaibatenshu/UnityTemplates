@@ -45,7 +45,6 @@ public class UnityEditorLoginGoogle : MonoBehaviour{
             JObject jsonResult = JObject.Parse(www.downloadHandler.text);
             string idToken = jsonResult["id_token"].ToString();
             string access_token = jsonResult["access_token"].ToString();
-            Debug.Log("Login success : "+ www.downloadHandler.text);
             onSuccess(idToken);
         }else{
             Debug.LogError(www.error);

@@ -21,11 +21,25 @@ public class GlobalCanvas : MonoBehaviour{
         _alertDialog.name = "AlertDialog";
     }
 
-    public void UnityEditorLoginGoogle(string _webClientId,string _webClientSecret, string _redirect_uri, UnityAction onSuccess,UnityAction<string> onError) {
+    public void UnityEditorLoginGoogle(string _webClientId,string _webClientSecret, string _redirect_uri, UnityAction<string> onSuccess,UnityAction<string> onError) {
         #if TEST
         Debug.Log("Link login : <color=gray>https://accounts.google.com/o/oauth2/v2/auth?response_type=code&scope=profile%20email&redirect_uri=" + _redirect_uri + "&client_id=" + _webClientId + "</color>");
         #endif
         Application.OpenURL("https://accounts.google.com/o/oauth2/v2/auth?response_type=code&scope=profile%20email&redirect_uri=" + _redirect_uri + "&client_id=" + _webClientId);
+
+        GameObject _signInGoogle = Instantiate(PrefabUtility.LoadPrefabContents("Assets/Scenes/Global/Dialog/UnityEditorLoginGoogle/UnityEditorLoginGoogle.prefab"), GameObject.Find("Canvas").transform);
+        _signInGoogle.GetComponent<UnityEditorLoginGoogle>().webClientId = _webClientId;
+        _signInGoogle.GetComponent<UnityEditorLoginGoogle>().webClientSecret = _webClientSecret;
+        _signInGoogle.GetComponent<UnityEditorLoginGoogle>().redirect_uri = _redirect_uri;
+        _signInGoogle.GetComponent<UnityEditorLoginGoogle>().onSuccess = (id_token) => { 
+            if(onSuccess!=null)
+                onSuccess(id_token);
+        };
+        _signInGoogle.GetComponent<UnityEditorLoginGoogle>().onError = (strError)=> {
+            if (onError != null)
+                onError(strError);
+        };
+
     }
 
 
