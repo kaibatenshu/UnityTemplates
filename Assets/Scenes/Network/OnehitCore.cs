@@ -1,7 +1,6 @@
 using System;
 using System.Threading;
 using System.Net.Sockets;
-using UnityEngine;
 
 public class OnehitCore{
     public const short ERRORCODE_NO_MESSAGE_SENDING = 1;
@@ -15,38 +14,41 @@ public class OnehitCore{
     protected MessageSending messageSending;
 	public int addWaitTimemili;
     
-    public TcpClient ConnectIp(String _ip,int _port,long TIME_OUT){
-        TcpClient _tcpClient;
+    public string ConnectIp(String _ip,int _port,long TIME_OUT){
+        string logError = null;
         if (_ip.Contains(":") || _ip.Contains("v6"))
-            _tcpClient = new TcpClient(AddressFamily.InterNetworkV6);
+            tcpSocket = new TcpClient(AddressFamily.InterNetworkV6);
         else
-            _tcpClient = new TcpClient(AddressFamily.InterNetwork);
+            tcpSocket = new TcpClient(AddressFamily.InterNetwork);
         try{
-            _tcpClient.BeginConnect(_ip, _port, null, null);
+            tcpSocket.BeginConnect(_ip, _port, null, null);
         }catch(SocketException scE){
-            Debug.Log(scE.Message.ToString());
+            logError = scE.Message.ToString();
         }
         
         for(int i=0;i<TIME_OUT/5;i++)
-            if (_tcpClient.Connected)
-                return _tcpClient;
+            if (tcpSocket.Connected)
+                return null;
             else
                 Thread.Sleep(5);
-        _tcpClient.Close();
-        return null;
+        tcpSocket.Close();
+        return logError;
     }
     
 
     private TcpClient tcpSocket;
     private NetworkStream networkStream;
-    protected void ProcessTCP(TcpClient _tcp) {
+    protected void ProcessTCP() {
         isRunning=true;
-        tcpSocket = _tcp;
         networkStream = tcpSocket.GetStream();
-        ProcessNetwork();
-        Thread.Sleep(3000);
-        networkStream.Close();
-        tcpSocket.Close();
+        messageReceiving = null;
+        try {
+            ProcessNetwork();
+        }finally {
+            Thread.Sleep(3000);
+            networkStream.Close();
+            tcpSocket.Close();
+        }
     }
 
 
@@ -56,29 +58,37 @@ public class OnehitCore{
     public Action<String> onError;
     private void ProcessNetwork() {
         long timeBeginProcess = DateTimeUtil.currentTimeMillis;
-        byte[] datatransfer = new byte[8192];
-        if (Wait(8))/*Chờ 2 giây*/
-            networkStream.Read(datatransfer, 0, 8);
+        byte[] handshake = new byte[8];
+        if (Wait(8))
+            networkStream.Read(handshake);
         else{
             onError("SOCKET_TIME_OUT(ValidateCode)");
             return;
         }
-        byte validateCode = datatransfer[3];
-        datatransfer[0] = (byte)(datatransfer[0] ^ validateCode);
-        datatransfer[1] = (byte)(datatransfer[1] ^ validateCode);
-        datatransfer[2] = (byte)(datatransfer[2] ^ validateCode);
-        datatransfer[3] = (byte)(datatransfer[4] ^ validateCode);
-        datatransfer[4] = (byte)(datatransfer[5] ^ validateCode);
-        datatransfer[5] = (byte)(datatransfer[6] ^ validateCode);
-        datatransfer[6] = (byte)(datatransfer[7] ^ validateCode);
-
+        byte validateCode = handshake[3];
+        /**************************************************************/
         byte[] dataMessage = messageSending.getBytesArray();
-        short length = (short)dataMessage.Length;
+        int length = dataMessage.Length;
+        byte[] datatransfer = new byte[length+11];
+
+        datatransfer[0] = (byte)(handshake[0] ^ validateCode);
+        datatransfer[1] = (byte)(handshake[1] ^ validateCode);
+        datatransfer[2] = (byte)(handshake[2] ^ validateCode);
+        datatransfer[3] = (byte)(handshake[4] ^ validateCode);
+        datatransfer[4] = (byte)(handshake[5] ^ validateCode);
+        datatransfer[5] = (byte)(handshake[6] ^ validateCode);
+        datatransfer[6] = (byte)(handshake[7] ^ validateCode);
+
+        datatransfer[7] = (byte)((int)((uint)length >> 24) & 0xFF);
+        datatransfer[8] = (byte)((int)((uint)length >> 16) & 0xFF);
+        datatransfer[9] = (byte)((int)((uint)length >> 8) & 0xFF);
+        datatransfer[10]= (byte)((int)((uint)length >> 0) & 0xFF);
+
         for (short i = 0; i < length; i++)
-            datatransfer[i + 9] = (byte)(dataMessage[i] ^ validateCode);
-        datatransfer[7] = (byte)(length >> 8);
-        datatransfer[8] = (byte)length;
-        networkStream.Write(datatransfer, 0, dataMessage.Length + 9);
+            datatransfer[i + 11] = (byte)(dataMessage[i] ^ validateCode);
+        Console.WriteLine("Chưa send gói tin lớn");
+        networkStream.Write(datatransfer, 0, dataMessage.Length + 11);
+        /**************************************************************/
 
         if(isOnlySend){/*Only Send*/
             onSuccess();
@@ -91,24 +101,34 @@ public class OnehitCore{
             if(isRunning==false){
                 onError("SOCKET_CLOSE_BY_USER");
                 return;
-            }else if (tcpSocket.Available < 2)
-                try{Thread.Sleep(5);}catch(Exception e){Debug.Log("Error : "+e.Message);}
+            }else if (tcpSocket.Available < 4)
+                Thread.Sleep(5);
             else
                 break;
 
-        if(tcpSocket.Available < 2){
+        if(tcpSocket.Available < 4){
             onError("ERROR(Sai giao thuc)");
             return;
         }
 
-        networkStream.Read(datatransfer, 0, 2);
+        networkStream.Read(datatransfer, 0, 4);
+
         int ch1 = datatransfer[0] & 0xFF;
         int ch2 = datatransfer[1] & 0xFF;
-        length = (short)((ch1 << 8) + (ch2 << 0)); if(length<0 || length>32768){onError("LengthError");return;}
+        int ch3 = datatransfer[2] & 0xFF;
+        int ch4 = datatransfer[3] & 0xFF;
+        length = ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+        if(length<0 || length>32768){
+            onError("LengthError");
+            return;
+        }
+
         datatransfer = new byte[length + 2];
         if (length > -1) {
             if (Wait(length)){
+                Console.WriteLine("Chưa receive gói tin lớn");
                 networkStream.Read(datatransfer, 2, length);
+                /**************************************************************/
                 for (short i = 0; i < length; i++)
                     datatransfer[i + 2] = (byte)(datatransfer[i + 2] ^ validateCode);
 

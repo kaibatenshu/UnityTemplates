@@ -38,20 +38,18 @@ public class NetworkGlobal : MonoBehaviour{
 
     }
 
-    public void StartOnehit(MessageSending _messageSending, Action<MessageReceiving> _onFinished, int _addSleepWait = 0){
-        StartOnehit(_messageSending, new ServerInfo("ipDefault",9999), _onFinished, _addSleepWait);//Server Default
+    public void StartOnehit(MessageSending _messageSending, Action<MessageReceiving> _onFinished, bool _onlysend = false, int _addSleepWait = 0){
+        StartOnehit(_messageSending, new ServerInfo("ipDefault",9999), _onFinished, _onlysend, _addSleepWait);//Server Default
     }
-    public void StartOnehit(MessageSending _messageSending, ServerInfo serverInfo, Action<MessageReceiving> _onFinished, int _addSleepWait = 0){List<ServerInfo> listSV = new List<ServerInfo>();listSV.Add(serverInfo);StartOnehit(_messageSending, listSV, _onFinished, _addSleepWait);}
-    public void StartOnehit(MessageSending _messageSending, List<ServerInfo> listServerInfo, Action<MessageReceiving> _onFinished, int _addSleepWait = 0){
-        OneHitGame clientOnehit = new OneHitGame(listServerInfo, _messageSending, _addSleepWait);
+    public void StartOnehit(MessageSending _messageSending, ServerInfo serverInfo, Action<MessageReceiving> _onFinished, bool _onlysend = false, int _addSleepWait = 0) {List<ServerInfo> listSV = new List<ServerInfo>();listSV.Add(serverInfo);StartOnehit(_messageSending, listSV, _onFinished, _onlysend, _addSleepWait);}
+    public void StartOnehit(MessageSending _messageSending, List<ServerInfo> listServerInfo, Action<MessageReceiving> _onFinished, bool _onlysend = false, int _addSleepWait = 0){
+        OneHitGame clientOnehit = new OneHitGame(listServerInfo, _messageSending, _onlysend, _addSleepWait);
         clientOnehit.onError = (n) => {
             #if TEST
             Debug.LogError("**************************************ERROR Onehit(SubServerDetail) : "+CMD_ONEHIT.getCMDName(_messageSending)+"➜"+n);
             #endif
             if (_onFinished != null)
-                setUpdateUI(() => {
-                    _onFinished(null);
-                });
+                setUpdateUI(() => {_onFinished(null);});
         };
         clientOnehit.onSuccess = () => {
             #if TEST
