@@ -298,7 +298,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Home
+  m_Text: Test Websocket
 --- !u!222 &389925536
 CanvasRenderer:
   m_ObjectHideFlags: 0
