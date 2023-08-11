@@ -18,7 +18,7 @@ public class Scene00_SplashManager : MonoBehaviour
     }
 
     public void onClickButtonTest() {
-        GlobalCanvas.instance.ShowAlertDialog("change to Login Scene", "Đồng ý", () => {
+        GlobalCanvas.instance.ShowAlertDialog("change to Login Scene", "Đồng ý", false, () => {
             SceneManager.LoadScene("Scene01_Login");
         });
         //GlobalCanvas.instance.trace();

@@ -10,7 +10,9 @@ public class GlobalCanvas : MonoBehaviour{
     {
 
     }
-    public void ShowAlertDialog(string alert, string textButton="Ok", UnityAction onClose = null, bool touchOutForClose=false){
+
+    public void ShowAlertDialog(string alert, string textButton="Ok", UnityAction onClose = null){ShowAlertDialog(alert, textButton, false, onClose);}
+    public void ShowAlertDialog(string alert, string textButton, bool touchOutForClose, UnityAction onClose=null){
         GameObject prefab = Instantiate(PrefabUtility.LoadPrefabContents("Assets/Scenes/Global/Dialog/Alert/Dialog_Alert.prefab"), GameObject.Find("Canvas").transform);
         prefab.GetComponent<Dialog_Alert>().onClose = onClose;
         prefab.GetComponent<Dialog_Alert>().touchOutForClose = touchOutForClose;
